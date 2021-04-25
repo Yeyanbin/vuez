@@ -16,7 +16,7 @@ export interface IVuezAction {
 export interface IVuezState {
     [key: string]: object | number | string | boolean;
 }
-declare class VuezModule<IAction, IState, IStateHandler> {
+declare class MyModule<IAction, IState, IStateHandler> {
     action: IAction;
     stateProxy: {
         [key in keyof IStateHandler]: any;
@@ -27,5 +27,5 @@ declare class VuezModule<IAction, IState, IStateHandler> {
 }
 export declare function createModule<IAction extends IVuezAction, IState extends IVuezState, THandlerKey extends string>(action: {
     [key in keyof IAction]: any;
-}, state: IState, stateHandler: TStateHandler<IState, THandlerKey>): VuezModule<IAction, IState, TStateHandler<IState, THandlerKey>>;
+}, state: IState, stateHandler: TStateHandler<IState, THandlerKey>): MyModule<IAction, IState, TStateHandler<IState, THandlerKey>>;
 export {};

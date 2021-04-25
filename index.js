@@ -6,11 +6,13 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createModule = void 0;
-var VuezModule = /** @class */ (function () {
-    function VuezModule(action, state, stateHandler) {
+var reactivity_1 = require("@vue/reactivity");
+var MyModule = /** @class */ (function () {
+    function MyModule(action, state, stateHandler) {
+        state = reactivity_1.reactive(state);
         this.stateProxy = new Proxy({}, {
             get: function (_, p) {
-                stateHandler[p].get(state);
+                return stateHandler[p].get(state);
             },
             set: function (_, p, value) {
                 stateHandler[p].set(state, value);
@@ -37,9 +39,9 @@ var VuezModule = /** @class */ (function () {
             stateProxy: this.stateProxy,
         };
     }
-    return VuezModule;
+    return MyModule;
 }());
 function createModule(action, state, stateHandler) {
-    return new VuezModule(action, state, stateHandler);
+    return new MyModule(action, state, stateHandler);
 }
 exports.createModule = createModule;

@@ -1,3 +1,4 @@
+import { reactive } from "@vue/reactivity";
 
 export type TContext<THandlerKey extends string, IAction> = {
   action: IAction,
@@ -17,24 +18,23 @@ export interface IVuezAction {
   [key: string]: (...args: any[]) => void;
 }
 
-
 export interface IVuezState { 
   [key: string]: object | number | string | boolean;
 }
 
-class VuezModule<IAction, IState, IStateHandler> {
+class MyModule<IAction, IState, IStateHandler> {
   
   action: IAction;
   stateProxy: {[key in keyof IStateHandler]: any};
 
   constructor(action: { [key in keyof IAction]: any}, state: IState, stateHandler: IStateHandler) {
-
+    state = reactive(state as Object) as IState;
     this.stateProxy = new Proxy({}, {
       get: (_, p) => {
-        (stateHandler as any)[p].get(state);
+        return (stateHandler as any)[p as string].get(state);
       },
       set: (_, p, value) => {
-        (stateHandler as any)[p].set(state, value);
+        (stateHandler as any)[p as string].set(state, value);
         return true;
       }
     }) as {[key in keyof IStateHandler]: any}
@@ -62,5 +62,5 @@ export function createModule<IAction extends IVuezAction, IState extends IVuezSt
   state: IState, stateHandler: 
   TStateHandler<IState, THandlerKey>)
   {
-  return new VuezModule<IAction, IState, TStateHandler<IState, THandlerKey>>(action, state, stateHandler);
+  return new MyModule<IAction, IState, TStateHandler<IState, THandlerKey>>(action, state, stateHandler);
 }
